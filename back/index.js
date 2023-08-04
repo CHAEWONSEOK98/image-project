@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const mime = require('mime-types');
+const mongoose = require('mongoose');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, './public'),
@@ -26,14 +28,23 @@ const upload = multer({
 const app = express();
 const PORT = 5000;
 
-app.use('/public', express.static('public')); // 클라이언트에서 사진 조회
+mongoose
+  .connect(`${process.env.MONGODB_URI}`)
+  .then(() => {
+    console.log('MongoDB Connected');
 
-app.post('/upload', upload.single('image'), (req, res) => {
-  console.log(req.file);
-  res.json(req.file);
-});
+    app.use('/public', express.static('public')); // 클라이언트에서 사진 조회
 
-app.listen(PORT, () => console.log('Express server listening on PORT ' + PORT));
+    app.post('/upload', upload.single('image'), (req, res) => {
+      console.log(req.file);
+      res.json(req.file);
+    });
+
+    app.listen(PORT, () =>
+      console.log('Express server listening on PORT ' + PORT)
+    );
+  })
+  .catch((err) => console.log(err));
 
 // {
 //     "fieldname": "image",

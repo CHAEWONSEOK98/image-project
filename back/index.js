@@ -1,9 +1,15 @@
+// env
 require('dotenv').config();
+
+// node
 const express = require('express');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const mime = require('mime-types');
+
+// db
 const mongoose = require('mongoose');
+const Image = require('./model/Image');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, './public'),
@@ -35,8 +41,11 @@ mongoose
 
     app.use('/public', express.static('public')); // 클라이언트에서 사진 조회
 
-    app.post('/upload', upload.single('image'), (req, res) => {
-      console.log(req.file);
+    app.post('/upload', upload.single('image'), async (req, res) => {
+      await new Image({
+        key: req.file.filename,
+        originalFileName: req.file.originalname,
+      }).save();
       res.json(req.file);
     });
 

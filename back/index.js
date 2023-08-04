@@ -41,12 +41,17 @@ mongoose
 
     app.use('/public', express.static('public')); // 클라이언트에서 사진 조회
 
-    app.post('/upload', upload.single('image'), async (req, res) => {
-      await new Image({
+    app.post('/images', upload.single('image'), async (req, res) => {
+      const images = await new Image({
         key: req.file.filename,
         originalFileName: req.file.originalname,
       }).save();
-      res.json(req.file);
+      res.json(images);
+    });
+
+    app.get('/images', async (req, res) => {
+      const images = await Image.find();
+      res.json(images);
     });
 
     app.listen(PORT, () =>

@@ -22,7 +22,7 @@ const UploadForm = () => {
     formData.append('image', file[0]);
 
     try {
-      const res = await axios.post('api/upload', formData, {
+      const res = await axios.post('api/images', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('success');
@@ -37,7 +37,11 @@ const UploadForm = () => {
   };
 
   return (
-    <main className="flex h-screen w-screen flex-col items-center justify-center space-y-10 md:flex md:flex-row-reverse md:justify-around">
+    <main
+      className={`flex h-screen w-screen flex-col items-center justify-center  space-y-10 p-8 md:flex md:flex-row-reverse ${
+        imgSrc !== null ? 'md:justify-around' : ''
+      }`}
+    >
       <section>
         <img className="rounded-md" src={imgSrc} alt={imgSrc} />
       </section>
@@ -53,6 +57,7 @@ const UploadForm = () => {
               className="h-full w-full cursor-pointer opacity-0"
               id="image"
               type="file"
+              accept="image/*"
               onChange={handleSelectFile}
             />
           </div>

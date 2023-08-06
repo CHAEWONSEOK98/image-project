@@ -3,70 +3,27 @@ require('dotenv').config();
 
 // node
 const express = require('express');
-const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
-const mime = require('mime-types');
 
 // db
 const mongoose = require('mongoose');
-const Image = require('./model/Image');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './public'),
-  //   filename: (req, file, cb) => cb(null, file.originalname),
-  //   filename: (req, file, cb) => cb(null, uuidv4()),
-  filename: (req, file, cb) =>
-    cb(null, `${uuidv4()}.${mime.extension(file.mimetype)}`),
-});
-
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    if (['image/png', 'image/jpeg', 'image/webp'].includes(file.mimetype))
-      cb(null, true);
-    else cb(new Error('invalid file type.'), false);
-  },
-  limits: {
-    fileSize: 1024 * 1024 * 5,
-  },
-});
+// router
+const { imageRouter } = require('./routes/imageRouter');
 
 const app = express();
-const PORT = 5000;
+const { MONGODB_URI, PORT } = process.env;
 
 mongoose
-  .connect(`${process.env.MONGODB_URI}`)
+  .connect(MONGODB_URI)
   .then(() => {
     console.log('MongoDB Connected');
 
     app.use('/public', express.static('public')); // 클라이언트에서 사진 조회
 
-    app.post('/images', upload.single('image'), async (req, res) => {
-      const images = await new Image({
-        key: req.file.filename,
-        originalFileName: req.file.originalname,
-      }).save();
-      res.json(images);
-    });
-
-    app.get('/images', async (req, res) => {
-      const images = await Image.find();
-      res.json(images);
-    });
+    app.use('/images', imageRouter);
 
     app.listen(PORT, () =>
       console.log('Express server listening on PORT ' + PORT)
     );
   })
   .catch((err) => console.log(err));
-
-// {
-//     "fieldname": "image",
-//     "originalname": "plum.jpg",
-//     "encoding": "7bit",
-//     "mimetype": "image/jpeg",
-//     "destination": "./public",
-//     "filename": "3ad3f15e-b6a7-4a9c-bfb9-d33d66726690.jpeg",
-//     "path": "public\\3ad3f15e-b6a7-4a9c-bfb9-d33d66726690.jpeg",
-//     "size": 33640
-// }

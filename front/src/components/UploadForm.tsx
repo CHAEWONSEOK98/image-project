@@ -1,10 +1,13 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { imageState } from '../atoms/atoms';
 
 const UploadForm = () => {
   const [file, setFile] = useState<File[]>([]);
   const [fileName, setFileName] = useState<string>('Drag files to upload');
   const [imgSrc, setImgSrc] = useState<any>(null);
+  const [images, setImages] = useRecoilState(imageState);
 
   const handleSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = Array.from(event.target.files || []);
@@ -28,11 +31,12 @@ const UploadForm = () => {
       alert('success');
       setFileName('Drag files to upload');
       setImgSrc(null);
+      setImages((prev) => [...prev, res.data]);
     } catch (error) {
       console.log(error);
-      alert('fail');
       setFileName('Drag files to upload');
       setImgSrc(null);
+      throw new Error('Failed to upload Image');
     }
   };
 

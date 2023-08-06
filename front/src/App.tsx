@@ -3,7 +3,7 @@ import ImageList from './components/ImageList';
 
 const App = () => {
   return (
-    <div>
+    <div className="flex flex-col items-center md:flex md:flex-row">
       <UploadForm />
       <ImageList />
     </div>

@@ -27,6 +27,7 @@ const ImageList = () => {
       src={`http://localhost:5000/public/${image.key}`}
     />
   ));
+
   return (
     <div className="grid grid-cols-2 grid-rows-2 gap-4 p-8">
       {images.length > 0 && imageList}

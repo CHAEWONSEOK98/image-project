@@ -7,15 +7,20 @@ const Image = require('../model/Image');
 // middleware
 const { upload } = require('../middleware/imageUpload');
 
-imageRouter.post('/images', upload.single('image'), async (req, res) => {
-  const images = await new Image({
-    key: req.file.filename,
-    originalFileName: req.file.originalname,
-  }).save();
+imageRouter.post('/', upload.array('image', 10), async (req, res) => {
+  const images = Promise.allSettled(
+    req.files.map(async (file) => {
+      const images = await new Image({
+        key: file.filename,
+        originalFileName: file.originalname,
+      }).save();
+      return images;
+    })
+  );
   res.json(images);
 });
 
-imageRouter.get('/images', async (req, res) => {
+imageRouter.get('/', async (req, res) => {
   const images = await Image.find();
   res.json(images);
 });

@@ -4,25 +4,27 @@ import { useRecoilState } from 'recoil';
 import { imageState } from '../atoms/atoms';
 
 const UploadForm = () => {
-  const [file, setFile] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[] | null>(null);
   const [fileName, setFileName] = useState<string>('Drag files to upload');
   const [imgSrc, setImgSrc] = useState<any>(null);
   const [images, setImages] = useRecoilState(imageState);
 
   const handleSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const imageFile = Array.from(event.target.files || []);
-    setFile(imageFile);
-    setFileName(imageFile[0].name);
+    if (event.target.files !== null) {
+      const imageFiles = event.target.files;
+      setFiles(imageFiles);
+      setFileName(imageFiles[0].name);
 
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(imageFile[0]);
-    fileReader.onload = () => setImgSrc(fileReader.result);
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(imageFiles[0]);
+      fileReader.onload = () => setImgSrc(fileReader.result);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append('image', file[0]);
+    if (files) for (let file of files) formData.append('image', file);
 
     try {
       const res = await axios.post('api/images', formData, {
@@ -31,7 +33,7 @@ const UploadForm = () => {
       alert('success');
       setFileName('Drag files to upload');
       setImgSrc(null);
-      setImages((prev) => [...prev, res.data]);
+      setImages((prev) => [...prev, ...res.data]);
     } catch (error) {
       console.log(error);
       setFileName('Drag files to upload');
@@ -61,6 +63,7 @@ const UploadForm = () => {
               className="h-full w-full cursor-pointer opacity-0"
               id="image"
               type="file"
+              multiple
               accept="image/*"
               onChange={handleSelectFile}
             />

@@ -4,20 +4,38 @@ import { useRecoilState } from 'recoil';
 import { imageState } from '../atoms/atoms';
 
 const UploadForm = () => {
-  const [files, setFiles] = useState<File[] | null>(null);
-  const [fileName, setFileName] = useState<string>('Drag files to upload');
-  const [imgSrc, setImgSrc] = useState<any>(null);
+  const [files, setFiles] = useState<any>(null);
+  const [previews, setPreviews] = useState<any>([]);
   const [images, setImages] = useRecoilState(imageState);
 
-  const handleSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectFile = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files !== null) {
       const imageFiles = event.target.files;
       setFiles(imageFiles);
-      setFileName(imageFiles[0].name);
 
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(imageFiles[0]);
-      fileReader.onload = () => setImgSrc(fileReader.result);
+      const imagePreviews = await Promise.allSettled(
+        [...imageFiles].map((imageFile) => {
+          return new Promise((resolve, reject) => {
+            try {
+              const fileReader: any = new FileReader();
+              fileReader.readAsDataURL(imageFile);
+              fileReader.onload = (e: any) =>
+                resolve({
+                  imgSrc: e.target.result,
+                  fileName: imageFile.name,
+                });
+            } catch (error) {
+              reject(error);
+            }
+          });
+        })
+      );
+      setPreviews(imagePreviews);
+      // const fileReader = new FileReader();
+      // fileReader.readAsDataURL(imageFiles[0]);
+      // fileReader.onload = () => setImgSrc(fileReader.result);
     }
   };
 
@@ -31,26 +49,29 @@ const UploadForm = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('success');
-      setFileName('Drag files to upload');
-      setImgSrc(null);
+      setPreviews([]);
       setImages((prev) => [...prev, ...res.data]);
     } catch (error) {
       console.log(error);
-      setFileName('Drag files to upload');
-      setImgSrc(null);
+      setPreviews([]);
       throw new Error('Failed to upload Image');
     }
   };
 
+  const previewImages = previews.map((preview: any) => (
+    <img key={preview.value.imgSrc} src={preview.value.imgSrc} alt="" />
+  ));
+
+  const fileName =
+    previews.length === 0
+      ? 'Drag files to upload'
+      : previews.reduce((prev, cur) => prev + `${cur.value.fileName} | `, '');
+
   return (
     <main
-      className={`flex h-screen w-screen flex-col items-center justify-center  space-y-10 p-8 md:flex md:flex-row-reverse ${
-        imgSrc !== null ? 'md:justify-around' : ''
-      }`}
+      className={`flex h-screen w-screen flex-col items-center justify-center  space-y-10 p-8 md:flex md:flex-row-reverse`}
     >
-      <section>
-        <img className="rounded-md" src={imgSrc} alt={imgSrc} />
-      </section>
+      <section>{previewImages}</section>
 
       <section>
         <form

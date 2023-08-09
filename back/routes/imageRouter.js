@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const imageRouter = Router();
+const { isValidObjectId } = require('mongoose');
 
 // model
 const Image = require('../model/Image');
@@ -21,8 +22,18 @@ imageRouter.post('/', upload.array('image', 10), async (req, res) => {
 });
 
 imageRouter.get('/', async (req, res) => {
-  const images = await Image.find();
-  res.json(images);
+  try {
+    const { lastId } = req.query;
+    if (lastId && !mongoose.isValidObjectId(lastId))
+      throw new Error('invalid lastId');
+    const images = await Image.find(lastId && { _id: { $lt: lastId } })
+      .sort({ _id: -1 })
+      .limit(5);
+    res.json(images);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = { imageRouter };

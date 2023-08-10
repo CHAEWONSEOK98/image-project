@@ -6,19 +6,24 @@ import { imageState } from '../atoms/atoms';
 const ImageList = () => {
   const [images, setImages] = useRecoilState(imageState);
   const [imageUrl, setImageUrl] = useState('/api/images');
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [imageError, setImageError] = useState(false);
 
   const getImageData = async (): Promise<void> => {
     try {
+      setImageLoading((prev) => true);
       const response = await axios.get(imageUrl);
       setImages((prev) => [...prev, ...response.data]);
     } catch (error) {
       console.log(error);
-      throw new Error('Failed to get Image');
+      setImageError((prev) => false);
+    } finally {
+      setImageLoading((prev) => false);
     }
   };
 
   const loadMoreImageData = () => {
-    if (images.length === 0) return;
+    if (images.length === 0 || imageLoading) return;
     const lastImageId = images[images.length - 1]._id;
     setImageUrl(`/api/images?lastId=${lastImageId}`);
   };
@@ -39,7 +44,13 @@ const ImageList = () => {
             />
           ))}
       </div>
-      <button onClick={loadMoreImageData}>Load More Images</button>
+
+      {!imageLoading ? (
+        <button onClick={loadMoreImageData}>Load More Images</button>
+      ) : (
+        <div>Loading...</div>
+      )}
+      {imageError && <div>Failed to get Image</div>}
     </div>
   );
 };

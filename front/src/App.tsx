@@ -1,15 +1,16 @@
 import Header from './components/Header';
-import ImageList from './components/ImageList';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 const App = () => {
   return (
     <>
       <Header />
       <Outlet />
-      <div className="flex flex-col items-center md:flex md:flex-row">
-        <ImageList />
-      </div>
+      <Link to={`/initial`}>
+        <button className="cursor-pointer rounded-xl border-2 border-black p-8">
+          initialPage
+        </button>
+      </Link>
     </>
   );
 };

@@ -1,10 +1,16 @@
+import Header from './components/Header';
 import ImageList from './components/ImageList';
+import { Outlet } from 'react-router-dom';
 
 const App = () => {
   return (
-    <div className="flex flex-col items-center md:flex md:flex-row">
-      <ImageList />
-    </div>
+    <>
+      <Header />
+      <Outlet />
+      <div className="flex flex-col items-center md:flex md:flex-row">
+        <ImageList />
+      </div>
+    </>
   );
 };
 

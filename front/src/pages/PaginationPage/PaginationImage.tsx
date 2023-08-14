@@ -1,13 +1,17 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { imageState } from '../atoms/atoms';
+import { imageState } from '../../atoms/atoms';
 
-const ImageList = () => {
+const PaginationImage = () => {
   const [images, setImages] = useRecoilState(imageState);
-  const [imageUrl, setImageUrl] = useState('/api/images');
+  const [imageUrl, setImageUrl] = useState('/api/images/pagination');
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    getImageData();
+  }, [imageUrl]);
 
   const getImageData = async (): Promise<void> => {
     try {
@@ -25,12 +29,8 @@ const ImageList = () => {
   const loadMoreImageData = () => {
     if (images.length === 0 || imageLoading) return;
     const lastImageId = images[images.length - 1]._id;
-    setImageUrl(`/api/images?lastId=${lastImageId}`);
+    setImageUrl(`/api/images/pagination?lastId=${lastImageId}`);
   };
-
-  useEffect(() => {
-    getImageData();
-  }, [imageUrl]);
 
   return (
     <div className="flex flex-col">
@@ -38,7 +38,7 @@ const ImageList = () => {
         {images.length > 0 &&
           images.map((image) => (
             <img
-              className="rounded-lg"
+              className="h-32 w-32 rounded-lg"
               key={image._id}
               src={`http://localhost:5000/public/${image.key}`}
             />
@@ -55,4 +55,4 @@ const ImageList = () => {
   );
 };
 
-export default ImageList;
+export default PaginationImage;

@@ -11,6 +11,11 @@ const App = () => {
           initialPage
         </button>
       </Link>
+      <Link to={`/pagination`}>
+        <button className="cursor-pointer rounded-xl border-2 border-black p-8">
+          paginationPage
+        </button>
+      </Link>
     </>
   );
 };

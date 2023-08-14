@@ -1,22 +1,26 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import UploadPage from './pages/UploadPage';
-import InitialPage from './pages/InitialPage';
+import InitialPage from './pages/InitialPage/InitialPage';
+import PaginationPage from './pages/PaginationPage/PaginationPage';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    children: [
-      {
-        path: '/upload',
-        element: <UploadPage />,
-      },
-      {
-        path: '/initial',
-        element: <InitialPage />,
-      },
-    ],
+  },
+
+  {
+    path: '/upload',
+    element: <UploadPage />,
+  },
+  {
+    path: '/initial',
+    element: <InitialPage />,
+  },
+  {
+    path: '/pagination',
+    element: <PaginationPage />,
   },
 ]);
 

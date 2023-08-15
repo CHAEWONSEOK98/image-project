@@ -10,6 +10,7 @@ const PaginationImage = () => {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
+    setImages([]);
     getImageData();
   }, [imageUrl]);
 

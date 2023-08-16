@@ -11,6 +11,9 @@ const PaginationImage = () => {
 
   useEffect(() => {
     setImages([]);
+  }, []);
+
+  useEffect(() => {
     getImageData();
   }, [imageUrl]);
 

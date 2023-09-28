@@ -41,4 +41,22 @@ imageRouter.get('/pagination', async (req, res) => {
   }
 });
 
+imageRouter.get('/infinite-scroll', async (req, res) => {
+  try {
+    const { lastId } = req.query;
+    if (!lastId) {
+      const images = await Image.find().sort({ _id: -1 }).limit(10);
+      res.json(images);
+    } else {
+      const images = await Image.find(lastId && { _id: { $lt: lastId } })
+        .sort({ _id: -1 })
+        .limit(5);
+      res.json(images);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = { imageRouter };

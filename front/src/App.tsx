@@ -16,6 +16,11 @@ const App = () => {
           paginationPage
         </button>
       </Link>
+      <Link to={`/infinite-scroll`}>
+        <button className="cursor-pointer rounded-xl border-2 border-black p-8">
+          infiniteScrollPage
+        </button>
+      </Link>
     </>
   );
 };

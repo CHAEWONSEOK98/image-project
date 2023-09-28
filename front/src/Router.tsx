@@ -3,6 +3,7 @@ import App from './App';
 import UploadPage from './pages/UploadPage';
 import InitialPage from './pages/InitialPage/InitialPage';
 import PaginationPage from './pages/PaginationPage/PaginationPage';
+import InfiniteScrollPage from './pages/InfiniteScrollPage/InfiniteScrollPage';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: '/pagination',
     element: <PaginationPage />,
+  },
+  {
+    path: '/infinite-scroll',
+    element: <InfiniteScrollPage />,
   },
 ]);
 

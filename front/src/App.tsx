@@ -11,9 +11,9 @@ const App = () => {
           initialPage
         </button>
       </Link>
-      <Link to={`/pagination`}>
+      <Link to={`/show-more`}>
         <button className="cursor-pointer rounded-xl border-2 border-black p-8">
-          paginationPage
+          showMorePage
         </button>
       </Link>
       <Link to={`/infinite-scroll`}>

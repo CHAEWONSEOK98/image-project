@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { imageState } from '../../atoms/atoms';
 
-const PaginationImage = () => {
+const ShowMoreImage = () => {
   const [images, setImages] = useRecoilState(imageState);
-  const [imageUrl, setImageUrl] = useState('/api/images/pagination');
+  const [imageUrl, setImageUrl] = useState('/api/images/show-more');
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [imageError, setImageError] = useState(false);
 
@@ -33,7 +33,7 @@ const PaginationImage = () => {
   const loadMoreImageData = () => {
     if (images.length === 0 || imageLoading) return;
     const lastImageId = images[images.length - 1]._id;
-    setImageUrl(`/api/images/pagination?lastId=${lastImageId}`);
+    setImageUrl(`/api/images/show-more?lastId=${lastImageId}`);
   };
 
   return (
@@ -50,7 +50,7 @@ const PaginationImage = () => {
       </div>
 
       {!imageLoading ? (
-        <button onClick={loadMoreImageData}>Load More Images</button>
+        <button onClick={loadMoreImageData}>Show More Images</button>
       ) : (
         <div>Loading...</div>
       )}
@@ -59,4 +59,4 @@ const PaginationImage = () => {
   );
 };
 
-export default PaginationImage;
+export default ShowMoreImage;

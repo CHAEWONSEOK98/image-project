@@ -26,14 +26,14 @@ imageRouter.get('/', async (req, res) => {
   res.json(images);
 });
 
-imageRouter.get('/pagination', async (req, res) => {
+imageRouter.get('/show-more', async (req, res) => {
   try {
     const { lastId } = req.query;
     if (lastId && !mongoose.isValidObjectId(lastId))
       throw new Error('invalid lastId');
     const images = await Image.find(lastId && { _id: { $lt: lastId } })
       .sort({ _id: -1 })
-      .limit(2);
+      .limit(10);
     res.json(images);
   } catch (error) {
     console.log(error);

@@ -50,7 +50,7 @@ const UploadForm = () => {
       });
       alert('success');
       setPreviews([]);
-      setImages((prev) => [...prev, ...res.data]);
+      setImages((prev) => [...res.data, ...prev]);
     } catch (error) {
       console.log(error);
       setPreviews([]);

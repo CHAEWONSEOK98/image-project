@@ -22,7 +22,7 @@ imageRouter.post('/', upload.array('image', 10), async (req, res) => {
 });
 
 imageRouter.get('/', async (req, res) => {
-  const images = await Image.find();
+  const images = await Image.find().sort({ _id: -1 });
   res.json(images);
 });
 

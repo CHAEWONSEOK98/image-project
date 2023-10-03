@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { imageState } from '../atoms/atoms';
 
@@ -7,6 +7,8 @@ const UploadForm = () => {
   const [files, setFiles] = useState<any>(null);
   const [previews, setPreviews] = useState<any>([]);
   const [images, setImages] = useRecoilState(imageState);
+
+  const inputRef = useRef(null);
 
   const handleSelectFile = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -51,9 +53,11 @@ const UploadForm = () => {
       alert('success');
       setPreviews([]);
       setImages((prev) => [...res.data, ...prev]);
+      inputRef.current.value = null;
     } catch (error) {
       console.log(error);
       setPreviews([]);
+      inputRef.current.value = null;
       throw new Error('Failed to upload Image');
     }
   };
@@ -81,6 +85,7 @@ const UploadForm = () => {
           <div className="flex h-64 w-80 items-center justify-center rounded-md border-[2px]  border-dashed border-black">
             <span className="absolute font-bold">{fileName}</span>
             <input
+              ref={inputRef}
               className="h-full w-full cursor-pointer opacity-0"
               id="image"
               type="file"
@@ -103,3 +108,20 @@ const UploadForm = () => {
 };
 
 export default UploadForm;
+
+// [에러]
+// 이미지를 선택하여 업로드 후 다시 업로드할 때, 이전과 같은 이미지를 업로드하려는 경우
+// 미리보기가 활성화되지 않는다.
+
+// [이유]
+// onChange={handleSelectFile}
+// 같은 이미지를 불러오는 경우 바뀐 것이 없는 것으로 인지하여 호출하지 않는다.
+
+// [해결방법?]
+// setPreviews([]); > useState에서 상태를 초기화하는 것과 비슷하게 초기화 시켜준다.
+// 이미지 업로드 후 인풋 값을 초기화한다.
+
+// [해결과정]
+// useRef를 이용하여 불러온 해당 element의 값을 할당한다.
+// handleSubmit에서 성공, 실패 두 경우 모두 현재 값을 초기화한다.
+// inputRef.current.value = null;
